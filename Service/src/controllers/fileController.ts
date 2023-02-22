@@ -1,14 +1,17 @@
-import { Request, Response, NextFunction } from 'express';
+import { Response, NextFunction } from 'express';
 import { FileParser } from '../utils/middleware/fileParse';
 import { ConfigFileHandler } from './configFileHandler';
+import { LogicController } from './logicController';
 export class FileController {
   private allowedFormats: string[];
   private configHandler: ConfigFileHandler;
   private fileParser: FileParser;
+  private logicController: LogicController;
   constructor() {
-    this.allowedFormats = ['csv', 'txt', 'jsonl'];
+    this.allowedFormats = ['csv', 'txt', 'jsonl', 'plain', 'octet-stream'];
     this.configHandler = new ConfigFileHandler();
     this.fileParser = new FileParser();
+    this.logicController = new LogicController();
   }
 
   /**
@@ -20,7 +23,7 @@ export class FileController {
   @param nextFuction Next function of Express middleware chain
   @returns JSON object with parsed file content or error message
   */
-  handleFileUpload(req: any, res: Response, nextFunction: NextFunction) {
+  async handleFileUpload(req: any, res: Response, nextFunction: NextFunction) {
     try {
       const file = req.files.file;
       const format = req.files.file.mimetype.split('/').pop();
@@ -37,10 +40,9 @@ export class FileController {
         encoding: this.configHandler.getEncoding(format),
       };
 
-      const fileContent = FileParser.parse(file.data.toString(), fileConfig);
-      res.status(200).json({
-        data: fileContent,
-      });
+      const { records } = FileParser.parse(file.data.toString(), fileConfig);
+      const responseLogic = await this.logicController.processAnalyzeData(records);
+      res.status(200).send({ message: 'operation successfull', data: responseLogic });
     } catch (error) {
       console.error('Error handling file upload: ', error);
       res.status(500).json({

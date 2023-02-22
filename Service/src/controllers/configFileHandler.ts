@@ -1,5 +1,5 @@
 export class ConfigFileHandler {
-  formatConfig: any;
+  private formatConfig: Object;
   constructor() {
     this.formatConfig = {
       csv: {
@@ -10,13 +10,26 @@ export class ConfigFileHandler {
         separator: '\t',
         encoding: 'utf8',
       },
+      plain: {
+        separator: '\n',
+        encoding: 'utf8',
+      },
       jsonl: {
+        separator: '',
+        encoding: 'utf8',
+      },
+      'octet-stream': {
         separator: '',
         encoding: 'utf8',
       },
     };
   }
-
+  /**
+   *
+   * @param req
+   * @param res
+   * @returns
+   */
   handleConfigUpdate(req, res) {
     const format = req.params.format;
     if (!this.formatConfig[format]) {
@@ -41,11 +54,19 @@ export class ConfigFileHandler {
       encoding,
     });
   }
-
+  /**
+   *
+   * @param format
+   * @returns
+   */
   getSeparator(format) {
     return this.formatConfig[format].separator;
   }
-
+  /**
+   *
+   * @param format
+   * @returns
+   */
   getEncoding(format) {
     return this.formatConfig[format].encoding;
   }
