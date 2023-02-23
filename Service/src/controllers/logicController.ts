@@ -1,3 +1,4 @@
+import * as async from 'async';
 import axios from 'axios';
 import config from '../config';
 import {
@@ -59,6 +60,7 @@ export class LogicController {
     const allData: IDataProducts[] = [];
     const listAllCategories: Record<string, string> = {};
     const listAllCurrency: Record<string, string> = {};
+    const listAllUser: Record<string, string> = {};
     const notFound: IDataUrl[] = [];
 
     await Promise.all(
@@ -84,23 +86,30 @@ export class LogicController {
                   return '';
                 })())
             : '';
-          const { nickname: sellerName = '' } = seller_id ? await this.getUsers(seller_id) : {};
+          const nickname = seller_id
+            ? listAllUser[seller_id] ||
+              ((await this.getUsers(seller_id))?.nickname ??
+                (() => {
+                  console.log('Error: currency not found for', item.site, item.id);
+                  return '';
+                })())
+            : '';
           allData.push({
             site: item.site,
             id: item.id,
             categoryName,
             currencyName,
             price,
-            sellerName,
+            sellerName: nickname,
             start_time,
           });
         } catch (error) {
           if (error?.response?.status === 404) {
             notFound.push(item);
           } else {
-            console.error(
-              `Error al obtener los datos para ${item.site}${item.id}: ${error.message}`
-            );
+            // console.error(
+            //   `Error al obtener los datos para ${config.baseUrlMeli}items/${item.site}${item.id}: ${error.message}`
+            // );
           }
         }
       })

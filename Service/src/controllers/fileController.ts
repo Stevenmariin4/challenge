@@ -2,6 +2,7 @@ import { Response, NextFunction } from 'express';
 import { FileParser } from '../utils/middleware/fileParse';
 import { ConfigFileHandler } from './configFileHandler';
 import { LogicController } from './logicController';
+
 export class FileController {
   private allowedFormats: string[];
   private configHandler: ConfigFileHandler;
