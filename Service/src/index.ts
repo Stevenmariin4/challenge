@@ -1,14 +1,16 @@
-"use strict";
+'use strict';
 // Libraries
-import * as bodyParser from "body-parser";
-import * as dotenv from "dotenv";
-import * as express from "express";
-import * as cors from "cors";
-import * as https from "https";
-import * as fs from "fs";
-import * as fileUpload from "express-fileupload";
-import config from "./config";
-import { FileRouter } from "./routes/file-router";
+import * as bodyParser from 'body-parser';
+import * as dotenv from 'dotenv';
+import * as express from 'express';
+import * as cors from 'cors';
+import * as https from 'https';
+import * as fs from 'fs';
+import * as fileUpload from 'express-fileupload';
+import config from './config';
+import { FileRouter } from './routes/file-router';
+import { databaseConnection } from './utils/database/connection';
+import envalid from './utils/env/index';
 /**
  * This class launch the service
  */
@@ -29,9 +31,11 @@ class Server {
     // Cors Options
     this.corsOptions = {
       // credentials: true,
-      methods: ["POST", "PUT", "PATCH", "DELETE"],
+      methods: ['POST', 'PUT', 'PATCH', 'DELETE'],
       origin: true,
     };
+    // Validate environment
+    this.env = envalid;
     // Configure Routes
     this.routes();
   }
@@ -41,12 +45,12 @@ class Server {
    */
   private config(): void {
     dotenv.config();
-    this.app.use(bodyParser.json({ limit: "2048mb" }));
-    this.app.use(bodyParser.urlencoded({ limit: "2048mb", extended: true }));
+    this.app.use(bodyParser.json({ limit: '2048mb' }));
+    this.app.use(bodyParser.urlencoded({ limit: '2048mb', extended: true }));
     this.app.use(cors(this.corsOptions));
     this.app.use(fileUpload());
 
-    this.app.set("port", this.normalizePort(config.port || 3001));
+    this.app.set('port', this.normalizePort(config.port || 3001));
   }
 
   /**
@@ -57,7 +61,7 @@ class Server {
   }
 
   private normalizePort(port: any) {
-    const convertPort = typeof port === "string" ? parseInt(port, 10) : port;
+    const convertPort = typeof port === 'string' ? parseInt(port, 10) : port;
     return isNaN(convertPort) ? port : convertPort > 0 ? convertPort : false;
   }
 
@@ -76,24 +80,38 @@ class Server {
           },
           this.app
         )
-        .listen(this.app.get("port"), () => {
+        .listen(this.app.get('port'), () => {
           console.log(
-            `App listening on port ${this.app.get(
-              "port"
-            )}! Go to https://localhost:${this.app.get("port")}/`
+            `App listening on port ${this.app.get('port')}! Go to https://localhost:${this.app.get(
+              'port'
+            )}/`
           );
         });
     } else {
-      server = this.app.listen(this.app.get("port"), () => {
-        console.log(`Listening on http://localhost:${this.app.get("port")}`);
-        process.on("SIGINT", () => {
-          console.log("Bye bye!");
+      server = this.app.listen(this.app.get('port'), () => {
+        console.log(`Listening on http://localhost:${this.app.get('port')}`);
+        process.on('SIGINT', () => {
+          console.log('Bye bye!');
           process.exit();
         });
       });
     }
   }
+  /**
+   * start proccess connection database and initServer
+   */
+  public startProcess() {
+    databaseConnection
+      .connectDatabase()
+      .then(() => {
+        console.log('connection database successfull');
+        this.initServer();
+      })
+      .catch((error) => {
+        console.log('Error connection database');
+      });
+  }
 }
 
 const server = new Server();
-server.initServer(false);
+server.startProcess();
