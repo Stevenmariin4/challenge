@@ -1,14 +1,14 @@
-import mongoose, { Schema } from 'mongoose';
+import mongoose from 'mongoose';
 
-const itemSchema = new mongoose.Schema(
+const processSchema = new mongoose.Schema(
   {
-    site: { type: String },
-    id: { type: String },
-    price: { type: String },
-    start_time: { type: Date },
-    name: { type: String },
-    description: { type: String },
-    nickName: { type: String },
+    status: { type: String },
+    totalItems: { type: String },
+    itemsAnalyzed: { type: Number },
+    itemsSuccessfull: { type: Array },
+    itemsError: { type: Array },
+    startTime: { type: String },
+    endTime: { type: String },
   },
   {
     timestamps: true,
@@ -16,4 +16,4 @@ const itemSchema = new mongoose.Schema(
   }
 );
 
-export default itemSchema;
+export default processSchema;

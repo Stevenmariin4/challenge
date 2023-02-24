@@ -112,7 +112,31 @@ export abstract class BaseService {
   }
 
   public update(req: Request, res: Response, next: NextFunction): Promise<any> {
-    return new Promise<any>((resolve, reject) => {});
+    return new Promise<any>(async (resolve, reject) => {
+      try {
+        let data = req.body;
+        const databaseTenant = await databaseConnection.switchDatabase(
+          this.database,
+          new Map([[this.table, this.model]])
+        );
+        const tenant = await databaseConnection.getDatabaseModel(databaseTenant, this.table);
+        tenant
+          .findByIdAndUpdate(req.params.id, data)
+          .then((response) => {
+            resolve({
+              code: 201,
+              message: 'operation succesfull',
+              data: response,
+            });
+          })
+          .catch((error) => {
+            console.error('has ocurred error when try update record', error);
+            reject(error);
+          });
+      } catch (error) {
+        reject(error);
+      }
+    });
   }
 
   public getById(req: Request, res: Response, next: NextFunction): Promise<any> {

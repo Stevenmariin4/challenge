@@ -1,8 +1,13 @@
 import axios from 'axios';
 import config from '../config';
 import { IDataProducts, IDataResponse, IDataUrl } from '../interface/logic.interface';
+import { ProcessController } from './process.controller';
 
 export class LogicController {
+  private processController: ProcessController;
+  constructor() {
+    this.processController = new ProcessController();
+  }
   /**
    *
    * @param body
@@ -49,61 +54,83 @@ export class LogicController {
   @param data An array of IDataUrl objects that contain the site and ID of each item to be analyzed.
   @returns An IDataResponse object containing the processed data and a list of items that were not found.
 */
-  public async processAnalyzeData(data: IDataUrl[]): Promise<IDataResponse> {
-    const allData: IDataProducts[] = [];
+  public async processAnalyzeData(data: IDataUrl[], idProcess?: string): Promise<IDataResponse> {
     const listAllCategories: Record<string, string> = {};
     const listAllCurrency: Record<string, string> = {};
-    const notFound: IDataUrl[] = [];
+    const batchSize = 300;
 
-    await Promise.all(
-      data.map(async (item) => {
-        try {
-          // Gets the required data for the current item.
-          const { seller_id, currency_id, category_id, start_time, price } = await this.getItems(
-            item
-          );
-          const categoryName = category_id
-            ? listAllCategories[category_id] ||
-              ((await this.getCategory(category_id))?.name ??
-                (() => {
-                  console.log('Error: category not found for', item.site, item.id);
-                  return 'Category Not Found';
-                })())
-            : '';
-          const currencyName = currency_id
-            ? listAllCurrency[currency_id] ||
-              ((await this.getCurrency(currency_id))?.description ??
-                (() => {
-                  console.log('Error: currency not found for', item.site, item.id);
-                  return 'Currency not Found';
-                })())
-            : '';
-          const { nickname } = await this.getUsers(seller_id);
-          allData.push({
-            site: item.site,
-            id: item.id,
-            name: categoryName,
-            description: currencyName,
-            price,
-            nickName: nickname,
-            start_time,
-          });
-        } catch (error) {
-          if (error?.response?.status === 404) {
-            notFound.push(item);
-          } else {
-            console.error(
-              `Error al obtener los datos para ${config.baseUrlMeli}items/${item.site}${item.id}: ${error.message}`
+    const batches = [];
+    for (let i = 0; i < data.length; i += batchSize) {
+      batches.push(data.slice(i, i + batchSize));
+    }
+
+    let allProducts = [];
+    let allNotFound = [];
+
+    for (const [index, batch] of batches.entries()) {
+      const batchProducts: IDataProducts[] = [];
+      const batchNotFound: IDataUrl[] = [];
+      console.log('Procesado', index);
+      await Promise.all(
+        batch.map(async (item) => {
+          try {
+            // Gets the required data for the current item.
+            const { seller_id, currency_id, category_id, start_time, price } = await this.getItems(
+              item
             );
+            const categoryName = category_id
+              ? listAllCategories[category_id] ||
+                ((await this.getCategory(category_id))?.name ??
+                  (() => {
+                    console.log('Error: category not found for', item.site, item.id);
+                    return 'Category Not Found';
+                  })())
+              : '';
+            const currencyName = currency_id
+              ? listAllCurrency[currency_id] ||
+                ((await this.getCurrency(currency_id))?.description ??
+                  (() => {
+                    console.log('Error: currency not found for', item.site, item.id);
+                    return 'Currency not Found';
+                  })())
+              : '';
+            const { nickname } = await this.getUsers(seller_id);
+            batchProducts.push({
+              site: item.site,
+              id: item.id,
+              name: categoryName,
+              description: currencyName,
+              price,
+              nickName: nickname,
+              start_time,
+            });
+          } catch (error) {
+            if (error?.response?.status === 404) {
+              batchNotFound.push(item);
+            } else {
+              console.error(
+                `Error al obtener los datos para ${config.baseUrlMeli}items/${item.site}${item.id}: ${error.message}`
+              );
+            }
           }
+        })
+      );
+      allProducts = [...allProducts, ...batchProducts];
+      allNotFound = [...allNotFound, ...batchNotFound];
+      if (!!!idProcess) {
+        if (batchProducts.length > 0) {
+          this.processController.insertNewItems(idProcess, { itemsSuccessfull: batchProducts });
         }
-      })
-    );
+        if (batchNotFound.length > 0) {
+          this.processController.insertNewItems(idProcess, { itemsError: batchNotFound });
+        }
+      }
+    }
     return {
-      products: allData,
-      notFound,
-      totalProducts: allData.length,
-      totalNotFound: notFound.length,
+      products: allProducts,
+      notFound: allNotFound,
+      totalProducts: allProducts.length,
+      totalNotFound: allNotFound.length,
     };
   }
 }
