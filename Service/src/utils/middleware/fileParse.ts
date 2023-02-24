@@ -1,6 +1,6 @@
 export class FileParser {
   static parse(data, config) {
-    const format = config.format;
+    const format = config.mimetype;
     const separator = config.separator;
     const encoding = config.encoding;
 
