@@ -1,15 +1,10 @@
 export class FileParser {
   static parse(data, config) {
-    const format = config.format;
+    const format = config.mimetype;
     const separator = config.separator;
     const encoding = config.encoding;
-
     if (format === 'csv') {
       return this.parseCSV(data, separator, encoding);
-    } else if (format === 'txt') {
-      return this.parseTXT(data, separator, encoding);
-    } else if (format === 'jsonl') {
-      return this.parseJSONL(data, encoding);
     } else if (format === 'plain') {
       return this.parseTXT(data, separator, encoding);
     } else if (format === 'octet-stream') {

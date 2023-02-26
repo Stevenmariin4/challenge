@@ -8,13 +8,15 @@ export interface IDataProducts {
   id: string;
   price: number;
   start_time: Date | string;
-  sellerName: string;
-  currencyName: string;
-  categoryName: string;
+  name: string;
+  description: string;
+  nickName: string;
 }
 export interface IDataResponse {
   products: IDataProducts[];
   notFound: any[];
+  totalProducts: number;
+  totalNotFound: number;
 }
 
 export interface IDataCategory {
