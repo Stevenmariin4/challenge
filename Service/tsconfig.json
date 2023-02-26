@@ -14,7 +14,6 @@
     "typeRoots": ["node_modules/@types"],
     "lib": ["es2022", "DOM"],
     "resolveJsonModule": true,
-    "types": ["module"],
     "paths": {
       "*": ["node_modules/*", "src/types/*"]
     }

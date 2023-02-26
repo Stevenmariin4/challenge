@@ -1,0 +1,24 @@
+version: '3'
+services:
+  myapp:
+    container_name: challenge
+    restart: always
+    build: ./service
+    ports:
+      - "5000:5000"
+    networks:
+      - myapp_network
+    depends_on:
+      - mongodb
+  mongodb:
+    container_name: mongo
+    restart: always
+    image: mongo
+    ports:
+      - "27018:27017"
+    networks:
+      - myapp_network
+
+networks:
+  myapp_network:
+    driver: bridge
