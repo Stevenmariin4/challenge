@@ -16,6 +16,12 @@ const config = {
   sslKey: process.env.SSL_KEY,
 
   baseUrlMeli: process.env.URLMELI,
+
+  dbHost: process.env.DB_HOST,
+  dbPort: process.env.DB_PORT,
+  dbName: process.env.DB_NAME,
+  dbPassword: process.env.DB_PASSWORD,
+  dbIsCloud: process.env.DB_IS_ClOUD,
 };
 
 export default config;

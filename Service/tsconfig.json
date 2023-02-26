@@ -13,7 +13,11 @@
     "target": "ES6",
     "typeRoots": ["node_modules/@types"],
     "lib": ["es2022", "DOM"],
-    "resolveJsonModule": true
+    "resolveJsonModule": true,
+    "types": ["module"],
+    "paths": {
+      "*": ["node_modules/*", "src/types/*"]
+    }
   },
   "include": ["src/**/*"],
   "exclude": ["node_modules", "**/*.spec.ts"]
