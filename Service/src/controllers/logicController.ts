@@ -9,9 +9,9 @@ export class LogicController {
     this.processController = new ProcessController();
   }
   /**
-   *
+   * method return data of item search by id
    * @param body
-   * @returns
+   * @returns data of itemS
    */
   private async getItems(body: IDataUrl) {
     const options = {
@@ -21,7 +21,11 @@ export class LogicController {
     const responseMeli = await axios.request(options);
     return responseMeli.data;
   }
-
+  /**
+   * Method search category by id
+   * @param idCategory
+   * @returns return data of category
+   */
   private async getCategory(idCategory: string) {
     const options = {
       method: 'get',
@@ -30,7 +34,11 @@ export class LogicController {
     const responseMeli = await axios.request(options);
     return responseMeli.data;
   }
-
+  /**
+   * Method return currency by id
+   * @param idCurrency
+   * @returns data of currency
+   */
   private async getCurrency(idCurrency: any) {
     const options = {
       method: 'get',
@@ -66,11 +74,9 @@ export class LogicController {
 
     let allProducts = [];
     let allNotFound = [];
-
     for (const [index, batch] of batches.entries()) {
       const batchProducts: IDataProducts[] = [];
       const batchNotFound: IDataUrl[] = [];
-      console.log('Procesado', index);
       await Promise.all(
         batch.map(async (item) => {
           try {
@@ -117,7 +123,7 @@ export class LogicController {
       );
       allProducts = [...allProducts, ...batchProducts];
       allNotFound = [...allNotFound, ...batchNotFound];
-      if (!!!idProcess) {
+      if (idProcess) {
         if (batchProducts.length > 0) {
           this.processController.insertNewItems(idProcess, { itemsSuccessfull: batchProducts });
         }

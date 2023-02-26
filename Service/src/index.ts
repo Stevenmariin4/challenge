@@ -11,6 +11,7 @@ import config from './config';
 import { FileRouter } from './routes/file-router';
 import { databaseConnection } from './utils/database/connection';
 import envalid from './utils/env/index';
+import { ProcessRouter } from './routes/process-router';
 /**
  * This class launch the service
  */
@@ -20,6 +21,7 @@ class Server {
   private env: any;
   private corsOptions: Object;
   private fileRouter: FileRouter;
+  private processRouter: ProcessRouter;
   constructor() {
     this.app = express();
 
@@ -28,6 +30,7 @@ class Server {
 
     // Instance Routers
     this.fileRouter = new FileRouter();
+    this.processRouter = new ProcessRouter();
     // Cors Options
     this.corsOptions = {
       // credentials: true,
@@ -58,6 +61,7 @@ class Server {
    */
   routes(): void {
     this.app.use(`${this.fileRouter.uri}`, this.fileRouter.router);
+    this.app.use(`${this.processRouter.uri}`, this.processRouter.router);
   }
 
   private normalizePort(port: any) {

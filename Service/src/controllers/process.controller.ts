@@ -11,20 +11,29 @@ export class ProcessController extends BaseService {
     this.validateParams = [];
     this.database = 'challenge';
   }
-
+  /**
+   * Method push new items to collection
+   * @param id id process
+   * @param items list items for add to collection
+   * @returns result operation
+   */
   public async insertNewItems(id: string, items) {
     return new Promise<any>(async (resolve, reject) => {
-      const databaseTenant = await databaseConnection.switchDatabase(
-        this.database,
-        new Map([[this.table, this.model]])
-      );
-      const tenant = await databaseConnection.getDatabaseModel(databaseTenant, this.table);
-      const responseUpdate = tenant.findByIdAndUpdate(id, { $push: items });
-      resolve({
-        code: 200,
-        message: 'Operation successfull',
-        data: responseUpdate,
-      });
+      try {
+        const databaseTenant = await databaseConnection.switchDatabase(
+          this.database,
+          new Map([[this.table, this.model]])
+        );
+        const tenant = await databaseConnection.getDatabaseModel(databaseTenant, this.table);
+        const responseUpdate = await tenant.findByIdAndUpdate(id, { $push: items });
+        resolve({
+          code: 200,
+          message: 'Operation successfull',
+          data: responseUpdate,
+        });
+      } catch (error) {
+        console.error('error update items', error);
+      }
     });
   }
 }

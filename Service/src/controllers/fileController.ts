@@ -1,8 +1,6 @@
 import { Response, NextFunction } from 'express';
 import { IFormat } from '../interface/format.interface';
-import processSchema from '../models/process.model';
-import { BaseService } from '../core/base-service';
-import { FileParser } from '../utils/middleware/fileParse';
+import { FileParser } from '../utils/fileParse/fileParse';
 import { ConfigFileHandler } from './configFileHandler';
 import { LogicController } from './logicController';
 import { IProcess } from '../interface/process.interface';
@@ -43,7 +41,6 @@ export class FileController {
           )}`,
         });
       }
-
       const fileConfig = {
         mimetype,
         separator: format.separator,
@@ -51,15 +48,14 @@ export class FileController {
       };
 
       const records = FileParser.parse(file.data.toString(), fileConfig).records;
-      req.body = { status: 'init', totalItems: records.length };
+      req.body = { status: 'inProcess', totalItems: records.length };
       const process = await this.createProcess(req, res, nextFunction);
 
       if (req.query.processsync === 'true') {
-        this.logicController.processAnalyzeData(records, process._id);
         res.status(201).json({ message: 'The operation has started', code: 201, id: process._id });
-        this.logicController.processAnalyzeData(records).then((data) => {
+        this.logicController.processAnalyzeData(records, process._id).then((data) => {
           req.params.id = process._id;
-          req.body = { status: 'end' };
+          req.body = { status: 'end', itemsAnalyzed: data.totalProducts };
           this.processController.update(req, res, nextFunction);
         });
         return null;

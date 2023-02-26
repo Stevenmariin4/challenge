@@ -17,10 +17,10 @@ export class ConfigFileHandler extends BaseService {
     ];
   }
   /**
-   *
-   * @param req
-   * @param res
-   * @returns
+   * Method search configuration of format file
+   * @param req request
+   * @param res response
+   * @returns separator and encoding
    */
   handleConfigUpdate(req, res) {
     const format = this.formatConfig.find((format) => {
@@ -42,7 +42,7 @@ export class ConfigFileHandler extends BaseService {
     });
   }
   /**
-   *
+   * Method search separator of minetype
    * @param format
    * @returns
    */
@@ -53,7 +53,7 @@ export class ConfigFileHandler extends BaseService {
     return formatFind.separator;
   }
   /**
-   *
+   * Method search encoding of mimetype
    * @param format
    * @returns
    */
