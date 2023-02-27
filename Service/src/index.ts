@@ -12,6 +12,8 @@ import { FileRouter } from './routes/file-router';
 import { databaseConnection } from './utils/database/connection';
 import envalid from './utils/env/index';
 import { ProcessRouter } from './routes/process-router';
+import { notFound } from './utils/middleware/notFound';
+import { clientErrorHandler, logErrors } from './utils/middleware/errorHandler';
 /**
  * This class launch the service
  */
@@ -41,6 +43,8 @@ class Server {
     this.env = envalid;
     // Configure Routes
     this.routes();
+    // Configure Errors
+    this.errors();
   }
 
   /**
@@ -68,7 +72,14 @@ class Server {
     const convertPort = typeof port === 'string' ? parseInt(port, 10) : port;
     return isNaN(convertPort) ? port : convertPort > 0 ? convertPort : false;
   }
-
+  /**
+   * management of errors with middleware
+   */
+  private errors(): void {
+    this.app.use(notFound);
+    this.app.use(logErrors);
+    this.app.use(clientErrorHandler);
+  }
   /**
    * Open the server in http
    */
