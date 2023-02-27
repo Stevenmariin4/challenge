@@ -2,11 +2,19 @@
 
 This project is to allow the uploading of files in CSV, JSON lines, or TXT format, analyze their content, and return the information in JSON format.
 
-### ENVIRONMENT
+## Dependency
 
-Unique environment that you should modify is DB_HOST set your ip address
+You should have mongodb community server or docker of mongo
 
-## Installation
+- [Mongo Download Windows](https://www.mongodb.com/try/download/community)
+- [Mongo Docker](https://hub.docker.com/_/mongo)
+
+### Environment Variables
+
+In file .env you should change the params dependency of your environment, unique dependency of project is DB_HOST
+`DB_HOST` = your Ipaddress
+
+## Installation With Docker
 
 Clone this project get in folder Challenge
 
@@ -14,6 +22,36 @@ To use this project, you must have Docker installed and run the following comman
 
 ```bash
  docker-compose up
+```
+
+## Run Locally
+
+Clone the project
+
+```bash
+  git clone https://github.com/Stevenmariin4/challengeProject
+```
+
+Go to the project directory
+
+```bash
+  cd Challenge
+```
+
+```bash
+  cd Service
+```
+
+Install dependencies
+
+```bash
+  npm install
+```
+
+Start the server
+
+```bash
+  npm run dev
 ```
 
 ### Postman Docs
@@ -46,6 +84,19 @@ Response
 - totalItems: all items in file
 - itemsSuccessfull: array with data process successful, and all data of items analysis
 - itemsError: array with data process error, and cause of error
+
+# Theory
+
+## Procesos, hilos y corrutinas
+
+- Un caso en el que usarías procesos para resolver un problema y por qué
+  Una aplicación que envía correos electrónicos masivos a los usuarios, en esta aplicación podemos usar el proceso para enviar correos electrónicos masivos en diferentes procesos sin bloquear el hilo principal del nodo js
+- Un caso en el que usarías threads para resolver un problema y por qué
+- Un caso en el que usarías corrutinas para resolver un problema y por qué.
+
+## Optimización de recursos del sistema operativo
+
+## Análisis de complejidad
 
 ## Authors
 
