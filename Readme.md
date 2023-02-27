@@ -2,11 +2,19 @@
 
 This project is to allow the uploading of files in CSV, JSON lines, or TXT format, analyze their content, and return the information in JSON format.
 
-### ENVIRONMENT
+## Dependency
 
-Unique environment that you should modify is DB_HOST set your ip address
+You should have mongodb community server or docker of mongo
 
-## Installation
+- [Mongo Download Windows](https://www.mongodb.com/try/download/community)
+- [Mongo Docker](https://hub.docker.com/_/mongo)
+
+### Environment Variables
+
+In file .env you should change the params dependency of your environment, unique dependency of project is DB_HOST
+`DB_HOST` = your Ipaddress
+
+## Installation With Docker
 
 Clone this project get in folder Challenge
 
@@ -14,6 +22,36 @@ To use this project, you must have Docker installed and run the following comman
 
 ```bash
  docker-compose up
+```
+
+## Run Locally
+
+Clone the project
+
+```bash
+  git clone https://github.com/Stevenmariin4/challengeProject
+```
+
+Go to the project directory
+
+```bash
+  cd Challenge
+```
+
+```bash
+  cd Service
+```
+
+Install dependencies
+
+```bash
+  npm install
+```
+
+Start the server
+
+```bash
+  npm run dev
 ```
 
 ### Postman Docs
@@ -46,6 +84,29 @@ Response
 - totalItems: all items in file
 - itemsSuccessfull: array with data process successful, and all data of items analysis
 - itemsError: array with data process error, and cause of error
+
+# Theory
+
+## Procesos, hilos y corrutinas
+
+- Un caso en el que usarías procesos para resolver un problema y por qué
+  Una aplicación que envía correos electrónicos masivos a los usuarios, en esta aplicación podemos usar el proceso para enviar correos electrónicos masivos en diferentes procesos sin bloquear el hilo principal del nodo js.
+  Esto con el fin de evitar la sobresaturación del hilo principal de nodejs
+- Un caso en el que usarías threads para resolver un problema y por qué
+  En procesamiento de imagenes o visualización de stream de una camara, ya que son procesos que consumen un alto recurso de cpu y al tener varias fuentes en 1 solo hilo su nivel de procesamiento seria elevado a demas de poder ocacionar una perdia del stream
+  Se usaria un hilo por cada visualizacion del stream de una camara para poder realizar procesamiento de video y optimizacion del stream en cada uno de los hilos y con ello generar una mejor calidad de video en el stream
+- Un caso en el que usarías corrutinas para resolver un problema y por qué.
+  Una corrutina se puede usar para ejecutar multiples request, ejecutandose en paralelo, al final de la corrutina se recopila las respuesta. esto permite optimizar los tiempos de ejecución de la aplicación.
+
+## Optimización de recursos del sistema operativo
+
+- Se puede utilizar una cola de solicitudes para procesar en segundo plano, anexo a eso utilizara child_process para poder aprovechar mejor los recursos de la cpu al dividir el proceso en varios subprocesos y asi poder manejar varias solicitudes en simultaneo, usaria una base de datos no relacional como mongo db por su escalabilidad horizontal, el cual permite el manejo de volumenes de datos de manera mas eficiente.
+
+## Análisis de complejidad
+
+- Principalmente me enfocaria en el algoritmo D su complejidad O(n log n) lo que significa que su tiempo de ejecucion crece en tamaño del problema, es decir a medida que el volumen de datos aumenta el tiempo de ejecución pero a un ritmo mas lento que los otros algoritmos.
+- Por otro lado descartaria el algorimo C de complejidad O(2^n) el que difiere que el tiempo de ejecución crecera exponencial con el tamaña del volumen de datos que valla a procesar, esto lo hace ineficiente para el manejo de grandes volumenes de datos
+- Los algoritmos A y B son cuadraticos y cubicos, lo que refiere que sus tiempos de ejecucion seran aceptables en procesamiento de mediamos volumenes de datos pero en el incremento de los volumenes de datos sus tiempos no seran aceptables.
 
 ## Authors
 
