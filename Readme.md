@@ -1,6 +1,6 @@
 # Challenge
 
-this project is to allow the uploading of files in CSV, JSON lines, or TXT format, analyze their content, and return the information in JSON format.
+This project is to allow the uploading of files in CSV, JSON lines, or TXT format, analyze their content, and return the information in JSON format.
 
 ## Installation
 
@@ -12,24 +12,19 @@ To use this project, you must have Docker installed and run the following comman
  docker-compose up
 ```
 
-## Usage/Examples
+### Postman Docs
 
-Exist two endpoints available currently
+Only Develop
+[Postman Docs](https://documenter.getpostman.com/view/3693350/SVn3raYf "Postman Docs")
 
-```
-- http://localhost:5000/files?processsync=true
-- http://localhost:5000/files?processsync=false
-- http://localhost:5000/proccess/idprocess
-```
-
-## Processsync
+<!-- ## AsyncProcess
 
 - First EndPoint
 
   if this params is true, the process is execution in background return a number of process for be use in other endpoint, if this params is false, the process is execute in realtime the end the process return all data save in database
 
 - Second EndPoint
-  this endpoint return, the status and data saved in database of the process, this method is util when you send request with params Procession in true y you want see status the process
+  this endpoint return, the status and data saved in database of the process, this method is util when you send request with params Procession in true y you want see status the process -->
 
 ## Send Data
 
@@ -49,7 +44,7 @@ Response
 
 ![App Screenshot](https://firebasestorage.googleapis.com/v0/b/jsmsoftware-70b6b.appspot.com/o/Captura%20de%20pantalla%202023-02-26%20181753.png?alt=media&token=dd108ca4-8f71-48da-8db3-ea8fe49441b5)
 
-- Message: Estatos operation
+- Message: Status operation
 - Data: Object with all data of process
 - \_id: Id process
 - status: exist three status: init, inProcess, end

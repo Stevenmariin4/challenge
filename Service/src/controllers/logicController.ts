@@ -75,6 +75,7 @@ export class LogicController {
     let allProducts = [];
     let allNotFound = [];
     for (const [index, batch] of batches.entries()) {
+      console.log('process ', index);
       const batchProducts: IDataProducts[] = [];
       const batchNotFound: IDataUrl[] = [];
       await Promise.all(
