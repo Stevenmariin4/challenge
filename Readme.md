@@ -104,9 +104,21 @@ Response
 
 ## Análisis de complejidad
 
+### First exercise
+
 - Principalmente me enfocaria en el algoritmo D su complejidad O(n log n) lo que significa que su tiempo de ejecucion crece en tamaño del problema, es decir a medida que el volumen de datos aumenta el tiempo de ejecución pero a un ritmo mas lento que los otros algoritmos.
 - Por otro lado descartaria el algorimo C de complejidad O(2^n) el que difiere que el tiempo de ejecución crecera exponencial con el tamaña del volumen de datos que valla a procesar, esto lo hace ineficiente para el manejo de grandes volumenes de datos
 - Los algoritmos A y B son cuadraticos y cubicos, lo que refiere que sus tiempos de ejecucion seran aceptables en procesamiento de mediamos volumenes de datos pero en el incremento de los volumenes de datos sus tiempos no seran aceptables.
+
+### Second exercise
+
+- AlfaDB: Esta base de datos seria adecuada para procesos que requieran una gran cantidad de lectura de datos pero un baja cantidad de escritura ya que su complejidad algorimica en el proceso de escritura hace que se demore escribiendo grandes volumenes de datos, pero su complejidad algorimica en lectura es baja lo que significa que podra leer datos rapidamente.
+
+Un ejemplo para esta base de datos es una aplicacion para el control de inventario de una tienda en el cual su nivel de lectura es mayor el nivel de escritura. ya que apesar de que constantemente este agregando elementos al inventarios, son mayor las solicitudes de lectura para indicar el stock que existe en la tienda
+
+- BetaDB: Esta base de datos seria adecuada para casos en los cuales sea necesario un nivel alto de escritura como de lectura, ya que su complejidad algoritmica es baja,a unque puede tardar mas que AlfaDB en escribir datos sigue siendo bastante eficiente.
+
+Un ejemplo para esta base de datos puede ser una aplicacion de chat de una red social. los mensajes de los usuarios son almacenados en la base de datos y cada ves que un usuario abre un chat este requiere que se lean todos los mensajes de esta conversación.
 
 ## Authors
 
