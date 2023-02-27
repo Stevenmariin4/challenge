@@ -2,6 +2,10 @@
 
 This project is to allow the uploading of files in CSV, JSON lines, or TXT format, analyze their content, and return the information in JSON format.
 
+### ENVIRONMENT
+
+Unique environment that you should modify is DB_HOST set your ip address
+
 ## Installation
 
 Clone this project get in folder Challenge
@@ -14,17 +18,8 @@ To use this project, you must have Docker installed and run the following comman
 
 ### Postman Docs
 
-Only Develop
+All documentation of api
 [Postman Docs](https://documenter.getpostman.com/view/3693350/SVn3raYf "Postman Docs")
-
-<!-- ## AsyncProcess
-
-- First EndPoint
-
-  if this params is true, the process is execution in background return a number of process for be use in other endpoint, if this params is false, the process is execute in realtime the end the process return all data save in database
-
-- Second EndPoint
-  this endpoint return, the status and data saved in database of the process, this method is util when you send request with params Procession in true y you want see status the process -->
 
 ## Send Data
 
