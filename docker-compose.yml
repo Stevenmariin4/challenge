@@ -1,5 +1,16 @@
-version: '3'
+version: '3.9'
 services:
+  mongodb:
+    container_name: mongo
+    restart: always
+    image: mongo
+    ports:
+      - "27018:27017"
+    networks:
+      - myapp_network
+    volumes:
+      - mongodb:/data/db
+
   myapp:
     container_name: challenge
     restart: always
@@ -10,14 +21,12 @@ services:
       - myapp_network
     depends_on:
       - mongodb
+    volumes:
+      - ./:/code
+
+volumes:
   mongodb:
-    container_name: mongo
-    restart: always
-    image: mongo
-    ports:
-      - "27018:27017"
-    networks:
-      - myapp_network
+
 
 networks:
   myapp_network:

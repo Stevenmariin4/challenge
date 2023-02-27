@@ -63,7 +63,10 @@ export class ConfigFileHandler extends BaseService {
     });
     return formatFind.encoding;
   }
-
+  /**
+   * Method return format and configurations
+   * @returns
+   */
   getNamesFormats() {
     return this.formatConfig;
   }
