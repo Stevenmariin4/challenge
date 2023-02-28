@@ -16,7 +16,6 @@ export class FileController {
     this.configHandler = new ConfigFileHandler();
     this.fileParser = new FileParser();
     this.logicController = new LogicController();
-    this.allowedFormats = this.configHandler.getNamesFormats();
     this.processController = new ProcessController();
   }
 
@@ -31,8 +30,13 @@ export class FileController {
   */
   async handleFileUpload(req: any, res: Response, nextFunction: NextFunction) {
     try {
+      if (!!req.file) {
+        return res.status(400).send({ message: 'File not found', code: 400 });
+      }
       const file = req.files.file;
       const mimetype = file.mimetype.split('/').pop();
+      await this.configHandler.validateDefaultFormats(req, res);
+      this.allowedFormats = this.configHandler.getNamesFormats();
       const format = this.allowedFormats.find((f) => f.mimetype === mimetype);
       if (!format) {
         return res.status(400).json({

@@ -10,11 +10,7 @@ export class ConfigFileHandler extends BaseService {
     this.model = formatSchema;
     this.validateParams = [];
     this.database = 'challenge';
-    this.formatConfig = [
-      { nameformat: 'csv', separator: ',', encoding: 'utf8', mimetype: 'csv' },
-      { nameformat: 'txt', encoding: 'utf8', separator: '\n', mimetype: 'plain' },
-      { nameformat: 'jsonl', encoding: 'utf8', separator: '\n', mimetype: 'octet-stream' },
-    ];
+    this.formatConfig = [];
   }
   /**
    * Method search configuration of format file
@@ -22,7 +18,7 @@ export class ConfigFileHandler extends BaseService {
    * @param res response
    * @returns separator and encoding
    */
-  handleConfigUpdate(req, res) {
+  public handleConfigUpdate(req, res) {
     const format = this.formatConfig.find((format) => {
       format.nameformat === req.query.format;
     });
@@ -42,11 +38,44 @@ export class ConfigFileHandler extends BaseService {
     });
   }
   /**
+   * Method validate if exist formats in database
+   * @param req
+   * @param res
+   */
+  public async validateDefaultFormats(req, res) {
+    return new Promise<any>(async (resolve, reject) => {
+      const { data } = await this.showAll(req, res, null);
+      if (data.length > 0) {
+        this.formatConfig = data.map((format) => {
+          return {
+            nameformat: format.nameformat,
+            separator: format.separator,
+            encoding: format.encoding,
+            mimetype: format.mimetype,
+          };
+        });
+        resolve(true);
+      } else {
+        const returnListFormat = await this.createDefaultValues(req, res);
+        this.formatConfig = returnListFormat.map((format) => {
+          return {
+            nameformat: format.nameformat,
+            separator: format.separator,
+            encoding: format.encoding,
+            mimetype: format.mimetype,
+          };
+        });
+        resolve(true);
+      }
+    });
+  }
+
+  /**
    * Method search separator of minetype
    * @param format
    * @returns
    */
-  getSeparator(mimetype: any) {
+  public getSeparator(mimetype: any) {
     const formatFind = this.formatConfig.find((format) => {
       format.mimetype === mimetype;
     });
@@ -57,7 +86,7 @@ export class ConfigFileHandler extends BaseService {
    * @param format
    * @returns
    */
-  getEncoding(mimetype: any) {
+  public getEncoding(mimetype: any) {
     const formatFind = this.formatConfig.find((format) => {
       format.mimetype === mimetype;
     });
@@ -67,7 +96,32 @@ export class ConfigFileHandler extends BaseService {
    * Method return format and configurations
    * @returns
    */
-  getNamesFormats() {
+  public getNamesFormats() {
     return this.formatConfig;
+  }
+  /**
+   * Methos create for default values in document formats
+   * @param req Request
+   * @param res Response
+   * @returns Return formats inserted
+   */
+  private async createDefaultValues(req, res) {
+    req.body = [
+      { nameformat: 'csv', separator: ',', encoding: 'utf8', mimetype: 'csv' },
+      { nameformat: 'txt', encoding: 'utf8', separator: '\n', mimetype: 'plain' },
+      { nameformat: 'jsonl', encoding: 'utf8', separator: '\n', mimetype: 'octet-stream' },
+    ];
+    const { data } = await this.create(req, res, null);
+    return data;
+  }
+  /**
+   * Method return all config by format
+   * @param req
+   * @param res
+   * @param next
+   * @returns
+   */
+  public async getAllFormat(req, res, next) {
+    return this.showAll(req, res, next);
   }
 }
