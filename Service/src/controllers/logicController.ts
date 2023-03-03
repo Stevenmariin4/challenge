@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { response } from 'express';
 import config from '../config';
 import { IDataProducts, IDataResponse, IDataUrl } from '../interface/logic.interface';
 import { ProcessController } from './process.controller';
@@ -85,22 +86,24 @@ export class LogicController {
             const { seller_id, currency_id, category_id, start_time, price } = await this.getItems(
               item
             );
-            const categoryName = category_id
-              ? listAllCategories[category_id] ||
-                ((await this.getCategory(category_id))?.name ??
-                  (() => {
-                    console.log('Error: category not found for', item.site, item.id);
-                    return 'Category Not Found';
-                  })())
-              : '';
-            const currencyName = currency_id
-              ? listAllCurrency[currency_id] ||
-                ((await this.getCurrency(currency_id))?.description ??
-                  (() => {
-                    console.log('Error: currency not found for', item.site, item.id);
-                    return 'Currency not Found';
-                  })())
-              : '';
+            let categoryName = '';
+            if (!!!category_id) {
+              if (listAllCategories[category_id]) {
+                const { name } = await this.getCategory(category_id).catch((error) => {
+                  console.log('Error get Category', error);
+                });
+                categoryName = name;
+              }
+            }
+            let currencyName = '';
+            if (currency_id) {
+              if (listAllCurrency[currency_id]) {
+                const { description } = await this.getCurrency(currency_id).catch((error) => {
+                  console.log('Error get currency', error);
+                });
+                currencyName = description;
+              }
+            }
             const { nickname } = await this.getUsers(seller_id);
             batchProducts.push({
               site: item.site,
@@ -115,9 +118,9 @@ export class LogicController {
             if (error?.response?.status === 404) {
               batchNotFound.push(item);
             } else {
-              console.error(
-                `Error al obtener los datos para ${config.baseUrlMeli}items/${item.site}${item.id}: ${error.message}`
-              );
+              // console.log(
+              //   `Error al obtener los datos para ${config.baseUrlMeli}items/${item.site}${item.id} ${error.message}`
+              // );
             }
           }
         })

@@ -13,6 +13,7 @@ import { databaseConnection } from './utils/database/connection';
 import envalid from './utils/env/index';
 import { ProcessRouter } from './routes/process-router';
 import { FormatRouter } from './routes/format-router';
+import { statusMemory } from './utils/resoursesSystem/statusResoursesSystem';
 /**
  * This class launch the service
  */
@@ -44,6 +45,8 @@ class Server {
     this.env = envalid;
     // Configure Routes
     this.routes();
+
+    this.listeningResourser();
   }
 
   /**
@@ -55,7 +58,6 @@ class Server {
     this.app.use(bodyParser.urlencoded({ limit: '2048mb', extended: true }));
     this.app.use(cors(this.corsOptions));
     this.app.use(fileUpload());
-
     this.app.set('port', this.normalizePort(config.port || 3001));
   }
 
@@ -118,6 +120,13 @@ class Server {
       .catch((error) => {
         console.log('Error connection database');
       });
+  }
+
+  public listeningResourser() {
+    // Call statusMemory() function every intervalTime milliseconds
+    setInterval(() => {
+      statusMemory();
+    }, 6000);
   }
 }
 
